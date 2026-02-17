@@ -22,7 +22,7 @@ const Login = () => {
                     localStorage.setItem('aToken',data.token)
                     setAToken(data.token)
                 }else{
-                    // toast.error(data.message)
+                    toast.error(data.message)
                 }
             }else{
 
