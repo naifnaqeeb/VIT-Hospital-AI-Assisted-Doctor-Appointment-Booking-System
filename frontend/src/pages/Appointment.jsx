@@ -60,7 +60,8 @@ const Appointment = () => {
         const slotDate = day + "_" + month + "_" + year
         const slotTime = formattedTime
 
-        const isSlotAvailable = docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true
+        const normalizeTime = (t) => t.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const isSlotAvailable = docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].some(t => normalizeTime(t) === normalizeTime(slotTime)) ? false : true
 
         if (isSlotAvailable) {
           //add slot to array

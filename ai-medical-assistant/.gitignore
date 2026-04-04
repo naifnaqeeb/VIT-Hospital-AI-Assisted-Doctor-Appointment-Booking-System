@@ -1,0 +1,63 @@
+# --- Environment Variables ---
+.env
+.env.*
+!.env.example
+**/ .env
+**/ .env.*
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.toast
+.build
+.pytest_cache/
+.coverage
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ipynb_checkpoints
+
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+dist/
+dist-ssr/
+build/
+.cache/
+.next/
+.serverless/
+.fusebox/
+.dynamodb/
+
+# --- Project Specific Storage & Logs ---
+backend/storage/
+backend/logs/
+frontend/dist/
+**/storage/
+**/logs/
+
+# --- Large Data Files (Optional: remove if you want them in Repo) ---
+# backend/data/medical_book.pdf
+
+# --- IDEs & OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
