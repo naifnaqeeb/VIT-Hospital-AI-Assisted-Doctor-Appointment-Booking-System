@@ -32,9 +32,10 @@ async def get_history_endpoint(req: Request):
 
 
 @router.get("/sessions")
-async def get_sessions_endpoint():
+async def get_sessions_endpoint(req: Request):
     """Return a list of all chat sessions with previews."""
-    return {"sessions": db_service.get_all_sessions(), "success": True}
+    client_id = req.headers.get("X-Client-ID")
+    return {"sessions": db_service.get_all_sessions(client_id), "success": True}
 
 
 @router.get("/session/{session_id}")

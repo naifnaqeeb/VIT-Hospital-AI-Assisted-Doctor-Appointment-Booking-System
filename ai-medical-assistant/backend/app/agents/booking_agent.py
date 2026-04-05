@@ -95,7 +95,7 @@ def BookingAgent(state: AgentState) -> AgentState:
                 state["_available_slots"] = slots  # temp storage for slot lookup
 
                 state["generation"] = (
-                    f"Great choice! You selected **Dr. {selected['name']}** "
+                    f"Great choice! You selected **{selected['name']}** "
                     f"({selected['degree']}, {selected['experience']} experience, ₹{selected['fees']} fee).\n\n"
                     + format_slot_options(slots)
                 )

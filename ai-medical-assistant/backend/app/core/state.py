@@ -40,6 +40,10 @@ class AgentState(TypedDict):
     symptom_turn_count: int   # how many symptom messages exchanged so far
     booking_suggested: bool   # True once specialist suggestion has been made
 
+    # ── Appointment Management Fields ──────────────────────────────────────────
+    appointment_phase: str    # "idle" | "viewing" | "canceling" | "confirm_canceling"
+    selected_appointment_id: Optional[str]
+
 
 def initialize_conversation_state() -> AgentState:
     """Return a fresh AgentState with all fields at their defaults."""
@@ -70,6 +74,8 @@ def initialize_conversation_state() -> AgentState:
         # Diagnostic tracking
         "symptom_turn_count": 0,
         "booking_suggested": False,
+        "appointment_phase": "idle",
+        "selected_appointment_id": None,
     }
 
 

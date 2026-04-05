@@ -6,6 +6,7 @@ LangGraph StateGraph definition, routing functions, and workflow factory.
 from langgraph.graph import END, StateGraph
 
 from app.agents.booking_agent import BookingAgent
+from app.agents.appointment_agent import AppointmentAgent
 from app.agents.executor import ExecutorAgent
 from app.agents.explanation import ExplanationAgent
 from app.agents.llm_agent import LLMAgent
@@ -22,6 +23,8 @@ def _route_after_planner(state: AgentState) -> str:
     tool = state.get("current_tool", "llm_agent")
     if tool == "booking_agent":
         return "booking_agent"
+    elif tool == "appointment_agent":
+        return "appointment_agent"
     return "retriever" if tool == "retriever" else "llm_agent"
 
 
@@ -60,6 +63,7 @@ def create_workflow():
     workflow.add_node("executor", ExecutorAgent)
     workflow.add_node("explanation", ExplanationAgent)
     workflow.add_node("booking_agent", BookingAgent)
+    workflow.add_node("appointment_agent", AppointmentAgent)
 
     # Entry point
     workflow.set_entry_point("memory")
@@ -73,6 +77,7 @@ def create_workflow():
             "retriever": "retriever",
             "llm_agent": "llm_agent",
             "booking_agent": "booking_agent",
+            "appointment_agent": "appointment_agent",
         },
     )
     workflow.add_conditional_edges(
@@ -95,6 +100,7 @@ def create_workflow():
     )
     workflow.add_edge("executor", END)
     workflow.add_edge("booking_agent", END)  # BookingAgent generates its own response
+    workflow.add_edge("appointment_agent", END)  # AppointmentAgent generates its own response
 
     return workflow.compile()
 

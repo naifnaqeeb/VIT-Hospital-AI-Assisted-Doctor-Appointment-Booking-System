@@ -29,7 +29,8 @@ async def chat_endpoint(request: ChatRequest, req: Request):
     if not chat_service.workflow_app:
         raise HTTPException(status_code=503, detail="System not initialized")
     session_id = _get_session_id(req)
-    return await chat_service.process_message(session_id, request.message, request.user_token)
+    client_id = req.headers.get("X-Client-ID")
+    return await chat_service.process_message(session_id, request.message, request.user_token, client_id)
 
 
 @router.post("/clear")

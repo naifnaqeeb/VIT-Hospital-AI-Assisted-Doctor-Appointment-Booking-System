@@ -40,6 +40,17 @@ BOOKING_KEYWORDS = [
     "consult", "see a doctor", "visit doctor",
 ]
 
+# ── Appointment Management Keywords ─────────────────────────────────────────────
+VIEW_APPOINTMENTS_KEYWORDS = [
+    "my appointment", "my appointments", "show appointment", "list appointment", 
+    "upcoming appointment", "view appointment", "what appointments", "scheduled appointment",
+    "check appointment"
+]
+
+CANCEL_APPOINTMENT_KEYWORDS = [
+    "cancel appointment", "delete appointment", "remove appointment"
+]
+
 
 def PlannerAgent(state: AgentState) -> AgentState:
     """Decide whether to use RAG retriever, direct LLM, or booking agent."""
@@ -65,6 +76,13 @@ def PlannerAgent(state: AgentState) -> AgentState:
             state["retry_count"] = 0
             return state
 
+    # ── If we're in an active appointment flow, continue it ────────────────
+    appointment_phase = state.get("appointment_phase", "idle")
+    if appointment_phase not in ("idle", None):
+        state["current_tool"] = "appointment_agent"
+        state["retry_count"] = 0
+        return state
+
     # ── If we're in an active booking flow, continue it ────────────────────
     if booking_phase not in ("idle", None, "awaiting_booking_consent"):
         state["current_tool"] = "booking_agent"
@@ -72,6 +90,24 @@ def PlannerAgent(state: AgentState) -> AgentState:
         return state
 
     # ── Check for explicit booking intent ──────────────────────────────────
+    # First, handle viewing or canceling, since "appointment" is a booking keyword too
+    
+    is_cancel = any(kw in question for kw in ["cancel", "delete", "remove", "drop"])
+    is_view = any(kw in question for kw in ["view", "show", "what", "list", "my", "check", "upcoming"])
+    has_appt = any(kw in question for kw in ["appointment", "appointments", "booking", "schedule"])
+
+    if is_cancel and has_appt:
+        state["current_tool"] = "appointment_agent"
+        state["appointment_phase"] = "canceling"
+        state["retry_count"] = 0
+        return state
+
+    if is_view and has_appt:
+        state["current_tool"] = "appointment_agent"
+        state["appointment_phase"] = "viewing"
+        state["retry_count"] = 0
+        return state
+
     if any(kw in question for kw in BOOKING_KEYWORDS):
         state["current_tool"] = "booking_agent"
         state["booking_phase"] = "recommending"

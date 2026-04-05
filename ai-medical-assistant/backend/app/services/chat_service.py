@@ -27,7 +27,7 @@ class ChatService:
             self.workflow_app = create_workflow()
             logger.info("LangGraph workflow initialized successfully")
 
-    async def process_message(self, session_id: str, message: str, user_token: str = None) -> Dict[str, Any]:
+    async def process_message(self, session_id: str, message: str, user_token: str = None, client_id: str = None) -> Dict[str, Any]:
         """Run the agentic pipeline for a single user message."""
         logger.info("Processing message for session %s...", session_id[:8])
 
@@ -35,7 +35,7 @@ class ChatService:
             raise ValueError("Workflow not initialized")
 
         # Persist user message
-        db_service.save_message(session_id, "user", message)
+        db_service.save_message(session_id, "user", message, client_id=client_id)
 
         # Initialize or retrieve conversation state
         if session_id not in self.conversation_states:
@@ -62,7 +62,7 @@ class ChatService:
         source = result.get("source", "Unknown")
 
         # Persist assistant response
-        db_service.save_message(session_id, "assistant", response_text, source)
+        db_service.save_message(session_id, "assistant", response_text, source, client_id=client_id)
 
         return {
             "response": response_text,

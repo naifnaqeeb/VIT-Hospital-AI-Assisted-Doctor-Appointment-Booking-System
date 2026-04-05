@@ -104,3 +104,56 @@ def format_slot_options(slots: list) -> str:
         return "Sorry, this doctor has no available slots in the next 7 days. Please try another doctor."
 
     return "Please click on a time slot below to book, or type 'back' to choose a different doctor."
+
+
+def fetch_user_appointments(user_token: str) -> dict:
+    """
+    Fetch all appointments for the logged-in user natively via Express GET endpoint.
+    """
+    try:
+        import httpx
+        headers = {"token": user_token}
+        
+        with httpx.Client(timeout=10.0) as client:
+            resp = client.get(
+                f"{HOSPITAL_API_BASE}/user/appointments",
+                headers=headers,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            
+        if data.get("success"):
+            return {"success": True, "appointments": data.get("appointments", [])}
+        else:
+            return {"success": False, "message": data.get("message", "Failed to fetch appointments.")}
+            
+    except httpx.ConnectError:
+        return {"success": False, "message": "Hospital server is strictly unreachable. Please try again."}
+    except Exception as e:
+        return {"success": False, "message": f"Error: {str(e)}"}
+
+
+def cancel_user_appointment(user_token: str, appointment_id: str) -> dict:
+    """
+    Cancel an existing appointment via the Express POST endpoint.
+    """
+    try:
+        import httpx
+        headers = {"token": user_token}
+        payload = {"appointmentId": appointment_id}
+
+        with httpx.Client(timeout=10.0) as client:
+            resp = client.post(
+                f"{HOSPITAL_API_BASE}/user/cancel-appointment",
+                json=payload,
+                headers=headers,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        return {"success": data.get("success", False), "message": data.get("message", "Cancelled.")}
+
+    except httpx.ConnectError:
+        return {"success": False, "message": "Hospital server is strictly unreachable."}
+    except Exception as e:
+        return {"success": False, "message": f"Error canceling: {str(e)}"}

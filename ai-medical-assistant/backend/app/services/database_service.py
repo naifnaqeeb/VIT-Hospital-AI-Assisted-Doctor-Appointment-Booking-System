@@ -35,12 +35,13 @@ class DatabaseService:
         role: str,
         content: str,
         source: Optional[str] = None,
+        client_id: Optional[str] = None,
     ) -> None:
         logger.debug("Saving %s message for session %s...", role, session_id[:8])
         with self.get_session() as session:
             session.add(
                 Message(
-                    session_id=session_id, role=role, content=content, source=source
+                    session_id=session_id, role=role, content=content, source=source, client_id=client_id
                 )
             )
             session.commit()
@@ -54,17 +55,20 @@ class DatabaseService:
             )
             return [msg.to_dict() for msg in session.execute(stmt).scalars().all()]
 
-    def get_all_sessions(self) -> List[Dict]:
+    def get_all_sessions(self, client_id: Optional[str] = None) -> List[Dict]:
         with self.get_session() as session:
-            latest_sub = (
-                select(
-                    Message.session_id,
-                    func.max(Message.timestamp).label("max_ts"),
-                )
-                .where(Message.role == "user")
-                .group_by(Message.session_id)
-                .subquery()
-            )
+            # First, group by session_id to find the latest message per session
+            latest_sub_query = select(
+                Message.session_id,
+                func.max(Message.timestamp).label("max_ts"),
+            ).where(Message.role == "user")
+            
+            if client_id:
+                latest_sub_query = latest_sub_query.where(Message.client_id == client_id)
+                
+            latest_sub = latest_sub_query.group_by(Message.session_id).subquery()
+            
+            # Now join with Message to get the actual message content
             stmt = (
                 select(Message.session_id, Message.content, Message.timestamp)
                 .join(
@@ -74,6 +78,9 @@ class DatabaseService:
                 )
                 .order_by(desc(Message.timestamp))
             )
+            
+            if client_id:
+                stmt = stmt.where(Message.client_id == client_id)
             return [
                 {
                     "session_id": row[0],
