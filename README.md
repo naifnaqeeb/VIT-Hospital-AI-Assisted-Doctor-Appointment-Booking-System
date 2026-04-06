@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/VitCare-AI%20Powered-5F6FFF?style=for-the-badge&logo=hospital&logoColor=white" alt="VitCare Badge"/>
 </p>
 
-<h1 align="center">🏥 VitCare — AI-Powered Hospital & Pharmacy Platform</h1>
+<h1 align="center">🏥 VitCare — AI-Assisted Doctor Appointment Booking System and Pharmacy Platform</h1>
 
 <p align="center">
   A full-stack hospital management system with an integrated <strong>AI Medical Assistant</strong> powered by a multi-agent <strong>LangGraph</strong> pipeline, enabling symptom-based diagnosis, automated doctor booking, appointment management, and campus pharmacy delivery — built for VIT Vellore.
@@ -374,27 +374,3 @@ TAVILY_API_KEY=tvly-your_tavily_api_key
 ```
 
 ---
-
-## 📸 Screenshots
-
-> *Add screenshots of your Hospital Homepage, Doctor Listing, AI Chat Widget, Booking Flow, and Admin Dashboard here.*
-
-| Hospital Homepage | AI Chat Widget | Doctor Booking |
-|:---:|:---:|:---:|
-| *Screenshot* | *Screenshot* | *Screenshot* |
-
-| Admin Dashboard | Appointment Management | Chat History |
-|:---:|:---:|:---:|
-| *Screenshot* | *Screenshot* | *Screenshot* |
-
----
-
-## 📄 License
-
-This project is built for academic purposes at **VIT Vellore**. All rights reserved.
-
----
-
-<p align="center">
-  Built with ❤️ by <strong>Naif Naqeeb</strong> · VIT Vellore
-</p>
